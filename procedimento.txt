@@ -1,0 +1,51 @@
+16/11/23
+
+Alessandro Hagy
+
+Instruções do projeto
+Uma empresa de vendas tem um banco de dados com informações sobre os seus produtos. Ela precisa criar um relatório que faça um levantamento diário da quantidade de produtos comprados por dia. Para ajudar a empresa, crie um procedure para agilizar esse processo.
+
+Trabalhe esse código em seu IDE, suba ele para sua conta no GitHub e compartilhe o link desse projeto no campo ao lado para que outros desenvolvedores possam analisá-lo.
+
+/*Criacao da tabela de produtos comprados*/
+
+
+create table quantidadeprodutodiav3(
+  cod_produto INT not NULL,
+  nome_produto VARCHAR(30) not NULL,
+  quantidade INT not NULL,
+  unidade_medida VARCHAR(2) not NULL,
+  data_compra DATE not NULL,
+  numero_pedido int not NULL,
+  CONSTRAINT pk_quantidade_data PRIMARY key (cod_produto, data_compra, numero_pedido) 
+  )
+  
+  /* Insercao de dados na tabela*/
+
+  insert INTO quantidadeprodutodiav3(cod_produto, nome_produto, quantidade, unidade_medida, data_compra, numero_pedido)
+ 	VALUES(1, 'chapeu', 50, 'EA', '2023-12-02', 123)
+    
+  insert INTO quantidadeprodutodiav3(cod_produto, nome_produto, quantidade, unidade_medida, data_compra, numero_pedido)
+ 	VALUES(1, 'chapeu', 100, 'EA', '2023-12-02', 456),
+    		(2, 'bone', 500, 'EA', '2023-12-02', 456)
+   
+   SELECT * from quantidadeprodutodiav3
+
+    insert INTO quantidadeprodutodiav3(cod_produto, nome_produto, quantidade, unidade_medida, data_compra, numero_pedido)
+ 	VALUES(1, 'chapeu', 11, 'EA', '2023-12-04', 555)
+
+    /*criacao da funcao que realizara o somatorio da quantidade de produtos por dia*/
+
+CREATE OR REPLACE FUNCTION calculaquantidadeprodutodiav15()
+RETURNS TABLE (cod_produto INT, data_compra DATE, resultado NUMERIC) 
+LANGUAGE plpgsql
+AS $$
+BEGIN
+  RETURN QUERY 
+  SELECT q.cod_produto, q.data_compra, CAST(SUM(q.quantidade) AS NUMERIC) AS resultado
+  FROM quantidadeprodutodiav3 AS q
+  GROUP BY q.cod_produto, q.data_compra;
+END $$;
+
+/*chamada da funcao para execucao do calculo da quantidade produto por dia*/
+SELECT * FROM calculaquantidadeprodutodiav15();
